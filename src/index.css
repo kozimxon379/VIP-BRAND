@@ -1,0 +1,54 @@
+@import "tailwindcss";
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-primary: #D4AF37;
+  --color-primary-dark: #B8860B;
+  --color-secondary: #1a1a1a;
+  
+  --color-bg-light: #ffffff;
+  --color-text-light: #D4AF37;
+  --color-border-light: #e5e7eb;
+  
+  --color-bg-dark: #000000;
+  --color-text-dark: #D4AF37;
+  --color-border-dark: rgba(212, 175, 55, 0.2);
+  
+  --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-border: var(--border-color);
+}
+
+@layer base {
+  :root {
+    --background: var(--color-bg-light);
+    --foreground: var(--color-text-light);
+    --border-color: var(--color-border-light);
+    --primary: var(--color-primary);
+  }
+
+  .dark {
+    --background: var(--color-bg-dark);
+    --foreground: var(--color-text-dark);
+    --border-color: var(--color-border-dark);
+    --primary: var(--color-primary);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    @apply antialiased transition-colors duration-300;
+  }
+}
+
+@keyframes toastProgress {
+  0% {
+    width: 100%;
+  }
+  100% {
+    width: 0%;
+  }
+}
