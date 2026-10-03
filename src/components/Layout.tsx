@@ -3,11 +3,13 @@ import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ShoppingCart, Heart, User, Sun, Moon, Search, Globe, LogOut } from 'lucide-react';
 import { useStore } from '../store/useStore';
+import { useCurrency } from '../hooks/useCurrency';
 
 export const Layout = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { theme, setTheme, cart, favorites, user, setUser } = useStore();
+  const { formatPrice } = useCurrency();
+  const { theme, setTheme, cart, favorites, user, setUser, products } = useStore();
 
   const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
   const toggleLanguage = () => {
@@ -15,10 +17,25 @@ export const Layout = () => {
     i18n.changeLanguage(nextLang);
   };
 
-  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && e.currentTarget.value.trim()) {
-      navigate(`/products?search=${encodeURIComponent(e.currentTarget.value.trim())}`);
-      e.currentTarget.value = '';
+  const [searchValue, setSearchValue] = React.useState('');
+  const [isSearchFocused, setIsSearchFocused] = React.useState(false);
+
+  const searchResults = React.useMemo(() => {
+    if (!searchValue.trim()) return [];
+    const lowerSearch = searchValue.toLowerCase();
+    return products.filter(p => 
+      t(p.name).toLowerCase().includes(lowerSearch) || 
+      t(p.description).toLowerCase().includes(lowerSearch) ||
+      p.name.toLowerCase().includes(lowerSearch)
+    ).slice(0, 5);
+  }, [searchValue, products, t]);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchValue.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchValue.trim())}`);
+      setSearchValue('');
+      setIsSearchFocused(false);
     }
   };
 
@@ -44,19 +61,52 @@ export const Layout = () => {
             <Link to="/products" className="hover:text-foreground/70 transition-colors">{t('products')}</Link>
             <Link to="/categories" className="hover:text-foreground/70 transition-colors">{t('categories')}</Link>
             <Link to="/sale" className="hover:text-foreground/70 transition-colors">{t('sale')}</Link>
-            <a href="/#contact" className="hover:text-foreground/70 transition-colors">{t('contact')}</a>
+            <Link to="/contact" className="hover:text-foreground/70 transition-colors">{t('contact')}</Link>
           </nav>
 
           <div className="flex items-center space-x-4">
-            <div className="relative hidden sm:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/60" />
+            <form onSubmit={handleSearchSubmit} className="relative hidden sm:block">
+              <button type="submit" className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/60 hover:text-foreground">
+                <Search className="w-4 h-4" />
+              </button>
               <input 
                 type="text" 
                 placeholder={t('search')} 
-                onKeyDown={handleSearch}
-                className="pl-9 pr-4 py-2 rounded-full bg-gray-100 dark:bg-[#222222]  text-foreground  border-none outline-none transition-all w-48 focus:w-64 font-medium"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+                className="pl-9 pr-4 py-2 rounded-full bg-gray-100 dark:bg-[#222222] text-foreground border-none outline-none transition-all w-48 focus:w-64 font-medium"
               />
-            </div>
+              
+              {/* Search Dropdown */}
+              {isSearchFocused && searchValue.trim() && (
+                <div className="absolute top-full mt-2 right-0 w-80 bg-background border border-border rounded-2xl shadow-xl overflow-hidden z-50">
+                  {searchResults.length > 0 ? (
+                    <div className="flex flex-col">
+                      {searchResults.map(product => (
+                        <Link 
+                          key={product.id} 
+                          to={`/products/${product.id}`}
+                          onClick={() => setSearchValue('')}
+                          className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-[#111111] transition-colors border-b border-border last:border-0"
+                        >
+                          <img src={product.image} alt={product.name} className="w-12 h-12 rounded-lg object-cover" />
+                          <div className="flex-1 overflow-hidden text-left">
+                            <p className="text-sm font-bold text-foreground truncate">{t(product.name)}</p>
+                            <p className="text-xs text-foreground/70 mt-0.5">{formatPrice(product.price)}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-4 text-center text-sm text-foreground/70 font-bold">
+                      {t('productNotFound')}
+                    </div>
+                  )}
+                </div>
+              )}
+            </form>
 
             <button onClick={toggleLanguage} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#222222]  text-foreground  transition-colors flex items-center gap-1 text-sm font-medium">
               <Globe className="w-5 h-5" />
@@ -67,7 +117,7 @@ export const Layout = () => {
               {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
 
-            <Link to="/profile" className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#222222]  text-foreground  transition-colors relative">
+            <Link to="/favorites" className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#222222]  text-foreground  transition-colors relative">
               <Heart className="w-5 h-5" />
               {favorites.length > 0 && (
                 <span className="absolute top-0 right-0 w-4 h-4 bg-secondary text-foreground text-xs rounded-full flex items-center justify-center font-bold">
@@ -117,7 +167,7 @@ export const Layout = () => {
             <Link to="/products" className="text-foreground/60 hover:text-foreground transition-colors">{t('products')}</Link>
             <Link to="/categories" className="text-foreground/60 hover:text-foreground transition-colors">{t('categories')}</Link>
             <Link to="/sale" className="text-foreground/60 hover:text-foreground transition-colors">{t('sale')}</Link>
-            <a href="/#contact" className="text-foreground/60 hover:text-foreground transition-colors">{t('contact')}</a>
+            <Link to="/contact" className="text-foreground/60 hover:text-foreground transition-colors">{t('contact')}</Link>
           </div>
         </div>
       </footer>

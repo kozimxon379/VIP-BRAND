@@ -7,11 +7,11 @@
   --color-secondary: #1a1a1a;
   
   --color-bg-light: #ffffff;
-  --color-text-light: #D4AF37;
+  --color-text-light: #000000;
   --color-border-light: #e5e7eb;
   
   --color-bg-dark: #000000;
-  --color-text-dark: #D4AF37;
+  --color-text-dark: #ffffff;
   --color-border-dark: rgba(212, 175, 55, 0.2);
   
   --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;

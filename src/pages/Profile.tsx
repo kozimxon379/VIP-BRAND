@@ -1,12 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import { ProductCard } from '../components/ProductCard';
 import { useStore } from '../store/useStore';
-import { Package, Heart, Settings } from 'lucide-react';
+import { Package, Settings } from 'lucide-react';
 import { Navigate, Link } from 'react-router-dom';
 
 export const Profile = () => {
   const { t } = useTranslation();
-  const { favorites, user } = useStore();
+  const { user } = useStore();
 
   if (!user) {
     return <Navigate to="/login" replace />;
@@ -40,30 +39,6 @@ export const Profile = () => {
         </div>
       </div>
 
-      {/* Favorites */}
-      <div>
-        <div className="flex items-center gap-3 mb-8">
-          <Heart className="w-6 h-6 fill-red-500 text-red-500" />
-          <h2 className="text-3xl font-black uppercase tracking-tight">{t('favorites')}</h2>
-          <span className="text-sm text-foreground/70 font-bold ml-2">({favorites.length})</span>
-        </div>
-
-        {favorites.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {favorites.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-20 bg-background  border border-border">
-            <Heart className="w-16 h-16 text-gray-300  mx-auto mb-4" />
-            <p className="text-xl font-bold text-foreground/70">{t('noFavorites')}</p>
-            <Link to="/products" className="inline-block mt-4 text-sm font-bold uppercase tracking-wide text-foreground/70 hover:text-foreground dark:hover:text-foreground transition-colors">
-              {t('startShopping')}
-            </Link>
-          </div>
-        )}
-      </div>
     </div>
   );
 };

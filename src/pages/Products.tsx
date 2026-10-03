@@ -20,9 +20,7 @@ export const Products = () => {
       setCategory(cat);
     }
     const searchParam = params.get('search');
-    if (searchParam) {
-      setSearchTerm(searchParam);
-    }
+    setSearchTerm(searchParam || '');
   }, [location.search]);
 
   const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];

@@ -153,9 +153,9 @@ export const Admin = () => {
       <aside className="fixed left-0 top-0 w-72 h-screen bg-[#D4AF37] text-black p-6 flex flex-col z-50 border-r border-gray-900">
         <div className="mb-12 mt-4">
           <Link to="/" className="text-3xl font-black uppercase tracking-tighter hover:opacity-80 transition-opacity block">
-            VIP <span className="text-foreground/70">ADMIN</span>
+            VIP <span className="text-black/70">ADMIN</span>
           </Link>
-          <p className="text-foreground/70 text-sm mt-2 font-medium uppercase tracking-widest">{t('adminPanel')}</p>
+          <p className="text-black/70 text-sm mt-2 font-medium uppercase tracking-widest">{t('adminPanel')}</p>
         </div>
         
         <nav className="space-y-1 flex-1">
@@ -168,8 +168,8 @@ export const Admin = () => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`w-full flex items-center gap-4 px-4 py-4 rounded-xl transition-all duration-300 font-bold text-left uppercase text-sm tracking-wide ${
                   isActive 
-                    ? 'bg-[#D4AF37] text-black shadow-lg scale-[1.02]' 
-                    : 'text-foreground/60 hover:bg-gray-900 hover:text-foreground'
+                    ? 'border border-black text-black shadow-lg scale-[1.02]' 
+                    : 'text-black/70 hover:bg-black/10 hover:text-black'
                 }`}
               >
                 <Icon className={`w-5 h-5 ${!isActive && 'opacity-70'}`} />
@@ -179,8 +179,8 @@ export const Admin = () => {
           })}
         </nav>
 
-        <div className="mt-auto border-t border-border pt-6 space-y-4">
-          <Link to="/" className="flex items-center gap-4 px-4 py-3 text-foreground/60 hover:text-foreground hover:bg-gray-900 rounded-xl transition-colors font-bold uppercase text-sm tracking-wide">
+        <div className="mt-auto border-t border-black/20 pt-6 space-y-4">
+          <Link to="/" className="flex items-center gap-4 px-4 py-3 text-black/70 hover:text-black hover:bg-black/10 rounded-xl transition-colors font-bold uppercase text-sm tracking-wide">
              <Globe className="w-5 h-5" /> {t('backToSite')}
           </Link>
         </div>
