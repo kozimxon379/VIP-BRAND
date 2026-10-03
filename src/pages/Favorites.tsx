@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { ProductCard } from '../components/ProductCard';
 import { useStore } from '../store/useStore';
-import { Heart, Search } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const Favorites = () => {
